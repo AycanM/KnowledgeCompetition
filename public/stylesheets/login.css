@@ -1,0 +1,85 @@
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: #1d1c1cdc;
+    overflow: hidden;
+}
+
+.container{
+    position: relative;
+    top: 50vh;
+    left: 50%;
+    width: 35%;
+    margin: 0!important;
+    padding: 0!important;
+    transform: translate(-50%, -50%);
+    border:1px solid white;
+    background-color: #5cdb95;
+    box-shadow: 0 4px 8px #1d1c1cdc;
+    
+}
+
+.login-box{
+    padding: 50px 100px;
+}
+
+.col-form-label{
+    font-weight: 600;
+    font-size: 1.1rem;
+    color:#1d1c1cdc;
+    margin-right: 10px;
+}
+
+form .form-group input[type="text"], form .form-group input[type="password"]{
+    background-color: #1d1c1cdc;
+    border-radius: 25px;
+    font-weight: 200;
+    color:white;
+    padding: 20px!important;
+    border: 2px solid white;
+    
+}
+
+
+.btn-signin{
+    background-color: #1d1c1cdc;
+    color: white;
+    font-weight: 500;
+    padding:15px;
+    border-radius: 0;
+    float: right;
+    border: 1px solid #1d1c1cdc;
+    text-transform: uppercase;
+    transition: all .3s ease-out;
+}
+
+.btn-signin:hover{
+    color: white;
+    background-color: #5cdb95;
+}
+
+
+.login-header{
+    text-align: center;
+}
+
+h2{
+    color: white;
+    text-shadow: 1px 2px 4px #1d1c1cdc;
+}
+h3{
+    text-shadow: 0px -2px 0+px white;
+}
+
+.img{
+    width: 50%;
+    max-width: 100%;
+    height: auto;
+    margin-left:auto; 
+    margin-right:auto; 
+}
+

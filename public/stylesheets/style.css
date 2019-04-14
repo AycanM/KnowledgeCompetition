@@ -1,8 +1,123 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+*
+{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
 }
 
-a {
-  color: #00B7FF;
+
+html
+{
+    font-size: 20px;
+}
+
+body
+{
+    width: 100%;
+    background-color: #1d1c1cdc;
+}
+
+.container
+{
+    /* background-color: #f0f0f0; */
+    
+}
+
+#player-section{
+    position: relative;
+    top: 10px;
+    left:25%;
+    width: 50%;
+    height: auto;
+
+}
+
+#player-section div>.row
+{
+    padding: 25px;
+}
+
+.player-box
+{
+    text-align: center;
+    font-size: 0.9rem;
+    background-color: #5cdb95;
+    border: 5px solid #5cdb95;
+    color: whitesmoke;
+    font-weight: 600;
+    padding: 15px 25px;
+    margin-right: 1.2rem;
+    display: inline-block;
+    border-radius: 0px;
+    text-transform: uppercase;
+}
+
+#question-section{
+    width: 50%;
+    left:25%;
+    height: auto;
+    position: relative;
+    top: .6rem;
+    color: white;
+    box-shadow: 0px 1px 0px white;
+    
+}
+
+#question{
+    font-family: 'Indie Flower', cursive;
+}
+
+#question-section > .container .row {
+    padding: 25px;
+    font-size: .8rem;
+}
+
+#question-section > .container span {
+    font-size: 1rem;
+    line-height: 3rem;
+    font-weight: 700;
+}
+
+#option-section{
+    width: 50%;
+    height: auto;
+    position: relative;
+    left: 25%;
+    top: 2rem;
+}
+
+#option-section .container .row{
+    padding: 10px 5px;
+}
+
+#option-section .container .row .col-md-5{
+    background-color: #1a1a1d;
+    color:white;
+    transition: all .2s ease-in-out;
+}
+
+#option-section .container .row .col-md-5:hover{
+    cursor: pointer;
+    background-color: #ebb043;
+}
+
+#option-section .container .row .col-md-5 > span{
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1rem;
+}
+
+
+#option-section .container .row .col-md-5 > p{
+    display: inline;
+    font-size: .8rem;
+    line-height: 1rem;
+}
+
+.mr-2{
+    margin-right: 1px;
+}
+
+#question-section, #option-section, .player-box{
+    user-select: none;
 }
