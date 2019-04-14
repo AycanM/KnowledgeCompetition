@@ -10,11 +10,12 @@ let roomName = uuid();
 
 
 io.on('connection', socket => {
-    socket.on("newUser", data => {
+    socket.on("joinRoom", data => {
         let newUser = {
             id:socket.id,
-            name:"Oğuzhan"
-        }
+            name:data.name,
+        };
+        
         if(rooms[roomName] === undefined){
                 rooms[roomName] = {
                 users:[]
@@ -31,8 +32,10 @@ io.on('connection', socket => {
             };
             rooms[roomName].users.push(newUser);
         }
-
-        console.log(rooms);
+        socket.join(roomName, data => {
+            console.log(`${roomName} odasına bağlanıldı`);
+            io.to(roomName).emit("newQuestion", {question:`Test question for ${roomName}`});
+        });
     });
 });
 

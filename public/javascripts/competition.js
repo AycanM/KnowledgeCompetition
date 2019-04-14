@@ -1,5 +1,9 @@
 var socket = io();
 
 $(document).ready(() =>{
-    socket.emit("newUser", {name:"Oğuzhan"});
+    socket.emit("joinRoom", {name:"Oğuzhan"});
+
+    socket.on("newQuestion", ({question})=>{
+        alert(question);
+    });
 });
