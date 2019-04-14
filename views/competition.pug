@@ -12,10 +12,8 @@ html(lang='en')
     section#player-section
       .container
         #players.row
-          .col-md-2.player-box.offset-md-1 Player 1
-          .col-md-2.player-box Player 2
-          .col-md-2.player-box Player 3
-          .col-md-2.player-box Player 4
+          .col-md-4.player-box.offset-md-1 Player 1
+          .col-md-4.player-box Player 2
     section#question-section
       .container
         .row
@@ -42,5 +40,7 @@ html(lang='en')
           .col-md-5
             span D -
             p Lorem ipsum dolor, sit amet consectetur adipisicing elit. 
-    script(src='jquery.min.js')
-    script(src='bootstrap.min.js')
+    script(src='javascripts/jquery.min.js')
+    script(src='javascripts/bootstrap.min.js')
+    script(src='/socket.io/socket.io.js')
+    script(src='javascripts/competition.js')
