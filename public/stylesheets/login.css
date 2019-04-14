@@ -50,16 +50,16 @@ form .form-group input[type="text"], form .form-group input[type="password"]{
     color: white;
     font-weight: 500;
     padding:15px;
-    border-radius: 0;
     float: right;
-    border: 1px solid #1d1c1cdc;
     text-transform: uppercase;
     transition: all .3s ease-out;
+    border-radius: 5px;
 }
 
 .btn-signin:hover{
     color: white;
-    background-color: #5cdb95;
+    background-color: #FF851B;
+    border: 1px solid white;
 }
 
 
@@ -83,3 +83,12 @@ h3{
     margin-right:auto; 
 }
 
+button + a {
+    font-weight: 700;
+    color: #1d1c1cdc;
+}
+
+button + a:hover {
+    font-weight: 700;
+    color: #1d1c1cdc;
+}
