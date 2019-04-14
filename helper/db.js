@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 module.exports = () => {
-    mongoose.connect('mongodb://localhost/knowledge-competition', { useMongoClient: true});
+    mongoose.connect('mongodb://localhost/knowledge-competition', { useNewUrlParser:true });
   
     mongoose.connection.on('open', () => {
        console.log('MongoDB: Connected');
