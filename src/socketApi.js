@@ -11,29 +11,28 @@ io.on('connection', socket => {
             id : socket.id, 
             name,
         }
-
-        let room = GetAvailableRoom();
-
-        if(room === null || room === undefined){
-            room = CreateRoom();
-        }
-        console.log(room);
-
+        let room = JoinRoomSwitcher();
         AddUserToRoom(newUser, room);
-
+        socket.join(room, ()=>{
+            io.to(room).emit('hello', {message: `Hello ${room}`});
+        });
     });
 });
 
 const GetAvailableRoom = () => {
+    console.log("LOG: GET_AVAILABLE_ROOM");
     for(let room in rooms){
         console.log(room);
-        if(room !== undefined && room.users !== undefined && room.users.length < 2){
+        console.log(rooms[room].users);
+        if(room !== null && room !== undefined && rooms[room].users !== undefined && rooms[room].users.length < 3){
+            console.log("test");
             return room;
         }
     }    
 };
 
 const CreateRoom = () => {
+    console.log("LOG: CREATE_ROOM");
     let room = uuid();
     rooms[room] = {
         users:[]
@@ -42,35 +41,18 @@ const CreateRoom = () => {
 };
 
 const AddUserToRoom = (user, roomName) => {
+    console.log("LOG: ADD_USER_TO_ROOM");
     rooms[roomName].users.push(user);
 };
 
 
+const JoinRoomSwitcher = () => {
+    console.log("LOG: JOIN ROOM SWITCHER");
+    let room = GetAvailableRoom();
+    if(room === null || room === undefined){
+        room = CreateRoom();
+    }
+    return room;
+}
+
 module.exports = socketApi;
-
-
-// let newUser = {
-        //     id:socket.id,
-        //     name:data.name,
-        // };
-        
-        // if(rooms[roomName] === undefined){
-        //         rooms[roomName] = {
-        //         users:[]
-        //     };
-        //     rooms[roomName].users.push(newUser);
-        // }
-        // else if(rooms[roomName].users !== undefined && rooms[roomName].users.length < 2){
-        //     rooms[roomName].users.push(newUser);
-        // }
-        // else{
-        //     roomName = uuid();
-        //     rooms[roomName] = {
-        //         users:[]
-        //     };
-        //     rooms[roomName].users.push(newUser);
-        // }
-        // socket.join(roomName, data => {
-        //     console.log(`${roomName} odasına bağlanıldı`);
-        //     io.to(roomName).emit("newQuestion", {question:`Test question for ${roomName}`});
-        // });
