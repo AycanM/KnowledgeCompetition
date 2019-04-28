@@ -121,3 +121,11 @@ body
 #question-section, #option-section, .player-box{
     user-select: none;
 }
+
+.false{
+    background-color: red!important;
+}
+
+.true{
+    background-color: green!important;
+}

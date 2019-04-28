@@ -7,9 +7,13 @@ let clickedAnyOpt = false;
 let point = 0;
 $(document).ready(() =>{
 
-    let userName = null;
+    $("#option-section").hide();
+    $("#question-header").hide();
+    $("#players").hide();
+
+    let userName = '';
     while(true){
-        if(userName.trim() === '' || userName === null || userName === undefined)
+        if(userName.trim() === '')
             userName = prompt("Lütfen kullanıcı adı giriniz");
         else
             break;
@@ -17,9 +21,7 @@ $(document).ready(() =>{
 
 
     
-    $("#option-section").hide();
-    $("#question-header").hide();
-    $("#players").hide();
+    
     
     socket.emit('JoinRoom', userName, (roomName, socketId) => {
         roomName_Client = roomName;
@@ -50,36 +52,47 @@ $(document).ready(() =>{
     });
 
     socket.on('SendQuestion', (question) => {
-        $("#question-header").show();
-        $("#option-section").show();
-        $("#question").html(question.text);
-        $("#option-a-txt").html(question.a);
-        $("#option-b-txt").html(question.b);
-        $("#option-c-txt").html(question.c);
-        $("#option-d-txt").html(question.d);
-        trueOption = question.trueOption;
-        questionNumber++;
-        clickedAnyOpt = false;
+        $('.opt').removeClass('true');
+        $('.opt').removeClass('false');
+        $("#question").html('Soru yükleniyor...');
+        setTimeout(()=>{
+            $("#question-header").show();
+            $("#option-section").show();
+            $("#question").html(question.text);
+            $("#option-a-txt").html(question.a);
+            $("#option-b-txt").html(question.b);
+            $("#option-c-txt").html(question.c);
+            $("#option-d-txt").html(question.d);
+            trueOption = question.trueOption;
+            questionNumber++;
+            clickedAnyOpt = false;
+        }, 1500);
+        
     });
 
-    $('.opt').click((e)=>{
+    $('.opt').click((e) => {
 
         if(!clickedAnyOpt){
             let clickedOptionId = e.target.id;
             let clickedOption = clickedOptionId.split("-"); 
             if(clickedOption[1] === trueOption){
                 if(clickedOption.length === 2)
-                    $('#' + clickedOptionId).css('background-color', 'green');
+                    $('#' + clickedOptionId).addClass('true');
                 else
-                    $('#opt-' + trueOption).css('background-color', 'green');
+                    $('#opt-' + trueOption).addClass('true');
                 point += 10;
-                socket.emit('ClientAnswered', roomName_Client, socketId, point);
+                setTimeout(() => {
+                    socket.emit('ClientAnswered', roomName_Client, socketIdOnServer, point);
+                }, 1500);
             }
             else{
                 if(clickedOption.length === 2)
-                    $('#' + clickedOptionId).css('background-color', 'red');
+                    $('#' + clickedOptionId).addClass('false');
                 else
-                    $('#opt-' + clickedOption[1]).css('background-color', 'red');
+                    $('#opt-' + clickedOption[1]).addClass('false');
+                setTimeout(() => {
+                    socket.emit('ClientAnswered', roomName_Client, socketIdOnServer, point);
+                }, 1500);
             }
             clickedAnyOpt = true;
         }else{
@@ -92,6 +105,7 @@ $(document).ready(() =>{
     socket.on('WaitOtherUser', () => {
         $("#question-header").hide();
         $("#option-section").hide();
+        $("#question-header").hide();
         $("#question").html("Diğer kullanıcıların cevap vermesi bekleniyor.");
     });
 });

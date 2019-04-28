@@ -38,8 +38,10 @@ io.on('connection', socket => {
 
             socket.on('ClientAnswered', (cRoom, cSocketId, point) => {
                 UpdateUserInfos(cRoom, cSocketId, point);
+                io.to(cRoom).emit('UsersInRoom', rooms[cRoom].users);
                 let isRoomReadyForNewQuestion = CheckAllUsersAnswered(cRoom);
                 if(isRoomReadyForNewQuestion){
+                    ResetRoom(cRoom, false);
                     io.to(cRoom).emit('SendQuestion', {
                             text:'Test question2',
                             a : 'A2 option',
@@ -139,8 +141,6 @@ const ResetRoom = (room, isDisconnected) => {
                user.hasAnswered = false;
            });
        }
-       console.log("userssss");
-       console.log(rooms[room].users);
 };
 const DeleteRoom = (room) =>{
     delete rooms[room];
@@ -154,6 +154,9 @@ const UpdateUserInfos = (room, socketId, point) => {
             if(rooms[room].users[i].id === socketId){
                 rooms[room].users[i].point = point;
                 rooms[room].users[i].hasAnswered = true;
+                console.log('UpdateUserInfos');
+                console.log(rooms);
+                console.log(rooms[room].users);
                 return;
             }
             
@@ -165,8 +168,12 @@ const CheckAllUsersAnswered = (room) => {
     if(rooms[room] !== undefined && rooms[room].users !== null){
         for (let i = 0; i < rooms[room].users.length; i++) {
             const user = rooms[room].users[i];
-            if(!user.hasAnswered)
+            if(!user.hasAnswered){
+                console.log('CheckAllUsersAnswered');
+                console.log(user);
+                console.log(rooms);
                 return false;
+            }
         }
 
         return true;
