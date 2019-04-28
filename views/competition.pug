@@ -12,34 +12,33 @@ html(lang='en')
     section#player-section
       .container
         #players.row
-          .col-md-4.col-sm-4.col-xs-12.player-box.offset-md-1 Player 1
-          .col-md-4.col-sm-4.col-xs-12.player-box Player 2
+          .col-md-4.col-sm-4.col-xs-12.player-box.offset-md-1#p1 Player 1
+            span#pt1
+          .col-md-4.col-sm-4.col-xs-12.player-box#p2 Player 2
+            span#pt2
     section#question-section
       .container
         .row
           .col-md-12.col-sm-12.col-xs-12
-            span SORU
+            span#question-header SORU
             p#question
-              | Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-              | Similique vero dolore impedit voluptas blanditiis cum assumenda accusantium laudantium,
-              | molestiae architecto neque modi esse porro perferendis vel necessitatibus consequuntur?
-              | Nisi, officiis.
+              
     section#option-section
       .container
         .row
-          .col-md-5.offset-md-1.mr-2.col-sm-12.col-xs-12
+          #opt-a.col-md-5.offset-md-1.mr-2.col-sm-12.col-xs-12.opt
             span A -
-            p Lorem ipsum dolor, sit amet consectetur adipisicing elit. 
-          .col-md-5
+            p#option-a-txt
+          #opt-b.col-md-5.opt
             span B -
-            p Lorem ipsum dolor, sit amet consectetur adipisicing elit. 
+            p#option-b-txt
         .row
-          .col-md-5.offset-md-1.mr-2
+          #opt-c.col-md-5.offset-md-1.mr-2.opt
             span C -
-            p Lorem ipsum dolor, sit amet consectetur adipisicing elit. 
-          .col-md-5
+            p#option-c-txt
+          #opt-d.col-md-5.opt
             span D -
-            p Lorem ipsum dolor, sit amet consectetur adipisicing elit. 
+            p#option-d-txt
     script(src='javascripts/jquery.min.js')
     script(src='javascripts/bootstrap.min.js')
     script(src='/socket.io/socket.io.js')
