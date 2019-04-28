@@ -59,6 +59,7 @@ $(document).ready(() =>{
         $("#option-d-txt").html(question.d);
         trueOption = question.trueOption;
         questionNumber++;
+        clickedAnyOpt = false;
     });
 
     $('.opt').click((e)=>{
@@ -88,4 +89,9 @@ $(document).ready(() =>{
             
     });
     
+    socket.on('WaitOtherUser', () => {
+        $("#question-header").hide();
+        $("#option-section").hide();
+        $("#question").html("Diğer kullanıcıların cevap vermesi bekleniyor.");
+    });
 });

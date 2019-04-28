@@ -39,6 +39,20 @@ io.on('connection', socket => {
             socket.on('ClientAnswered', (cRoom, cSocketId, point) => {
                 UpdateUserInfos(cRoom, cSocketId, point);
                 let isRoomReadyForNewQuestion = CheckAllUsersAnswered(cRoom);
+                if(isRoomReadyForNewQuestion){
+                    io.to(cRoom).emit('SendQuestion', {
+                            text:'Test question2',
+                            a : 'A2 option',
+                            b : 'B2 option',
+                            c : 'C2 option',
+                            d : 'D2 option',
+                            trueOption: 'd',
+                        } 
+                    );
+                }
+                else{
+                    socket.emit('WaitOtherUser');
+                }
             });
         });
     });
