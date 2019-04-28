@@ -1,22 +1,31 @@
 const io = require("socket.io")();
 const uuid = require('uuid');
+const Question = require('../models/Question');
 const socketApi = {};
-socketApi.io = io;
-
+let questions = [];
 const rooms = {};
 
+socketApi.io = io;
 io.on('connection', socket => {
-    socket.on('JoinRoom', (name, callback) => {
+    Question.find({ })
+            .then((questionsfromDb) => {
+                questions = questionsfromDb;
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    socket.on('JoinRoom', (name, callback) => {        
         let newUser = { 
             id : socket.id, 
             name,
             point:0,
             hasAnswered : false,
-        }
+        };
         let room = JoinRoomSwitcher();
         AddUserToRoom(newUser, room);
         socket.join(room, () => {
             callback(room, socket.id);
+            InitializeQuestionsForRoom(room);
             if(rooms[room].users.length === 2){
                 io.to(room).emit('ReadyForGame', { message : 'Ready'});
             }
@@ -25,32 +34,20 @@ io.on('connection', socket => {
             }
             socket.on('StartGame', () => {
                 io.to(room).emit('UsersInRoom', rooms[room].users);
-                io.to(room).emit('SendQuestion', {
-                        text:'Test question',
-                        a : 'A option',
-                        b : 'B option',
-                        c : 'C option',
-                        d : 'D option',
-                        trueOption: 'a',
-                    } 
-                );
+                let question = GetQuestion(room, 0);
+                    if(question !== null)
+                        io.to(room).emit('SendQuestion',  question);
             });
 
-            socket.on('ClientAnswered', (cRoom, cSocketId, point) => {
+            socket.on('ClientAnswered', (cRoom, cSocketId, cQuestionNumber, point) => {
                 UpdateUserInfos(cRoom, cSocketId, point);
                 io.to(cRoom).emit('UsersInRoom', rooms[cRoom].users);
                 let isRoomReadyForNewQuestion = CheckAllUsersAnswered(cRoom);
                 if(isRoomReadyForNewQuestion){
                     ResetRoom(cRoom, false);
-                    io.to(cRoom).emit('SendQuestion', {
-                            text:'Test question2',
-                            a : 'A2 option',
-                            b : 'B2 option',
-                            c : 'C2 option',
-                            d : 'D2 option',
-                            trueOption: 'd',
-                        } 
-                    );
+                    let question = GetQuestion(cRoom, cQuestionNumber);
+                    if(question !== null)
+                        io.to(cRoom).emit('SendQuestion',  question);
                 }
                 else{
                     socket.emit('WaitOtherUser');
@@ -84,7 +81,7 @@ const CreateRoom = () => {
     let room = uuid();
     rooms[room] = {
         users:[],
-        currentQuestion : -1,
+        questions:[],
     };
     console.log('create_room: ' + room);
     console.log("-----------------");
@@ -136,8 +133,10 @@ const ResetRoom = (room, isDisconnected) => {
        
        if(users !== null && users.length !== 0){
            users.forEach(user => {
-               if(isDisconnected)
-                    user.point = 0;
+               if(isDisconnected){
+                   user.point = 0;
+                    rooms[room].questions = [];
+               }
                user.hasAnswered = false;
            });
        }
@@ -179,4 +178,26 @@ const CheckAllUsersAnswered = (room) => {
         return true;
     }
 };
+const InitializeQuestionsForRoom = (room) => {
+    if(rooms[room].questions.length === 0 && rooms[room].questions !== undefined){
+        while(rooms[room].questions.length < 11){
+            let questionNum = Math.floor(Math.random() * questions.length);
+            if(rooms[room].questions.indexOf(questionNum) === -1)
+                rooms[room].questions.push(questionNum);
+        }
+    }
+};
+
+const GetQuestion = (room, index) => {
+    if(questions.length !== 0 && rooms[room] !== undefined && rooms[room].questions.length !== 0){
+        let questionNo = rooms[room].questions[index];
+        let question = questions[questionNo];
+        console.log('\nquestion start\n');
+        console.log(question);
+        console.log('\nquestion end\n');
+        return question;
+    }
+    return null;
+};
+
 module.exports = socketApi;

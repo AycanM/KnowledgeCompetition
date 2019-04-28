@@ -64,7 +64,6 @@ $(document).ready(() =>{
             $("#option-c-txt").html(question.c);
             $("#option-d-txt").html(question.d);
             trueOption = question.trueOption;
-            questionNumber++;
             clickedAnyOpt = false;
         }, 1500);
         
@@ -75,26 +74,31 @@ $(document).ready(() =>{
         if(!clickedAnyOpt){
             let clickedOptionId = e.target.id;
             let clickedOption = clickedOptionId.split("-"); 
-            if(clickedOption[1] === trueOption){
-                if(clickedOption.length === 2)
-                    $('#' + clickedOptionId).addClass('true');
-                else
-                    $('#opt-' + trueOption).addClass('true');
-                point += 10;
-                setTimeout(() => {
-                    socket.emit('ClientAnswered', roomName_Client, socketIdOnServer, point);
-                }, 1500);
+            questionNumber++;
+            if(questionNumber === 11){
+                socket.emit("EndGame", roomName_Client);
+            }else{
+                if(clickedOption[1] === trueOption){
+                    if(clickedOption.length === 2)
+                        $('#' + clickedOptionId).addClass('true');
+                    else
+                        $('#opt-' + trueOption).addClass('true');
+                    point += 10;
+                    setTimeout(() => {
+                        socket.emit('ClientAnswered', roomName_Client, socketIdOnServer, questionNumber, point);
+                    }, 1500);
+                }
+                else{
+                    if(clickedOption.length === 2)
+                        $('#' + clickedOptionId).addClass('false');
+                    else
+                        $('#opt-' + clickedOption[1]).addClass('false');
+                    setTimeout(() => {
+                        socket.emit('ClientAnswered', roomName_Client, socketIdOnServer, questionNumber, point);
+                    }, 1500);
+                }
+                clickedAnyOpt = true;
             }
-            else{
-                if(clickedOption.length === 2)
-                    $('#' + clickedOptionId).addClass('false');
-                else
-                    $('#opt-' + clickedOption[1]).addClass('false');
-                setTimeout(() => {
-                    socket.emit('ClientAnswered', roomName_Client, socketIdOnServer, point);
-                }, 1500);
-            }
-            clickedAnyOpt = true;
         }else{
             return false;
         }
