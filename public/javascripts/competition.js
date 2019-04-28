@@ -52,6 +52,7 @@ $(document).ready(() =>{
     });
 
     socket.on('SendQuestion', (question) => {
+        questionNumber++;
         $('.opt').removeClass('true');
         $('.opt').removeClass('false');
         $("#question").html('Soru yükleniyor...');
@@ -74,10 +75,6 @@ $(document).ready(() =>{
         if(!clickedAnyOpt){
             let clickedOptionId = e.target.id;
             let clickedOption = clickedOptionId.split("-"); 
-            questionNumber++;
-            if(questionNumber === 11){
-                socket.emit("EndGame", roomName_Client);
-            }else{
                 if(clickedOption[1] === trueOption){
                     if(clickedOption.length === 2)
                         $('#' + clickedOptionId).addClass('true');
@@ -98,7 +95,14 @@ $(document).ready(() =>{
                     }, 1500);
                 }
                 clickedAnyOpt = true;
-            }
+                
+                if(questionNumber === 11){
+                    socket.emit("EndGame", roomName_Client, (winnerUser) => {
+                        let alertText = winnerUser.name + '\n' + 'Puan: ' + winnerUser.point;
+                        alert(alertText);
+                    });
+                }
+            
         }else{
             return false;
         }

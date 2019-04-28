@@ -53,6 +53,11 @@ io.on('connection', socket => {
                     socket.emit('WaitOtherUser');
                 }
             });
+            
+            socket.on('EndGame', (cRoom, callback) => {
+                let winnerUser = GetWinnerUser(room);
+                callback(winnerUser);
+            });
         });
     });
     socket.on('disconnect', () => {
@@ -198,6 +203,12 @@ const GetQuestion = (room, index) => {
         return question;
     }
     return null;
+};
+
+const GetWinnerUser = (room) => {
+    var users = rooms[room].users;
+    let user = users[0].point > users[1].point ? users[0] : users[1];
+    return user;
 };
 
 module.exports = socketApi;
