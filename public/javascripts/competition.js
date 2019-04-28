@@ -1,13 +1,19 @@
 const socket = io();
 let questionNumber = 0;
 let roomName_Client = null;
+let socketIdOnServer = null;
 let trueOption = null;
 let clickedAnyOpt = false;
+let point = 0;
 $(document).ready(() =>{
 
-    let userName = prompt("Lütfen kullanıcı adı giriniz");
-    if(userName.trim() === '' || userName === null || userName === undefined)
-        userName = prompt("Lütfen kullanıcı adı giriniz");
+    let userName = null;
+    while(true){
+        if(userName.trim() === '' || userName === null || userName === undefined)
+            userName = prompt("Lütfen kullanıcı adı giriniz");
+        else
+            break;
+    }
 
 
     
@@ -15,12 +21,19 @@ $(document).ready(() =>{
     $("#question-header").hide();
     $("#players").hide();
     
-    socket.emit('JoinRoom', userName, roomName => {
+    socket.emit('JoinRoom', userName, (roomName, socketId) => {
         roomName_Client = roomName;
+        socketIdOnServer = socketId;
+        console.log(roomName_Client);
+        console.log(socketIdOnServer);
     });
 
     socket.on('NotEnoughUser', ( { message }) =>{
-        $("#question").html("Yarışmanın başlaması için minimum kullanıcı sayısı sağlanmış değil.Lütfen bekleyiniz");            
+        $("#question").html("Yarışmanın başlaması için minimum kullanıcı sayısı sağlanmış değil.Lütfen bekleyiniz");
+        $("#option-section").hide();
+        $("#question-header").hide();
+        $("#players").hide();
+        questionNumber = 0;
     });
     socket.on('ReadyForGame', ( { message }) =>{
         $("#question").html("Kısa süre içerisinde yarışmamız başlayacak.")
@@ -58,6 +71,8 @@ $(document).ready(() =>{
                     $('#' + clickedOptionId).css('background-color', 'green');
                 else
                     $('#opt-' + trueOption).css('background-color', 'green');
+                point += 10;
+                socket.emit('ClientAnswered', roomName_Client, socketId, point);
             }
             else{
                 if(clickedOption.length === 2)

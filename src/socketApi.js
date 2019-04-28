@@ -11,19 +11,19 @@ io.on('connection', socket => {
             id : socket.id, 
             name,
             point:0,
+            hasAnswered : false,
         }
         let room = JoinRoomSwitcher();
         AddUserToRoom(newUser, room);
-        socket.join(room, ()=>{
-            callback(room);
-            io.to(room).emit('hello', {message: `Hello ${room}`});
+        socket.join(room, () => {
+            callback(room, socket.id);
             if(rooms[room].users.length === 2){
                 io.to(room).emit('ReadyForGame', { message : 'Ready'});
             }
             else{
                 io.to(room).emit('NotEnoughUser', { message : `Not enough user in this room: ${room}`});
             }
-            socket.on('StartGame', () =>{
+            socket.on('StartGame', () => {
                 io.to(room).emit('UsersInRoom', rooms[room].users);
                 io.to(room).emit('SendQuestion', {
                         text:'Test question',
@@ -35,10 +35,17 @@ io.on('connection', socket => {
                     } 
                 );
             });
+
+            socket.on('ClientAnswered', (cRoom, cSocketId, point) => {
+                UpdateUserInfos(cRoom, cSocketId, point);
+                let isRoomReadyForNewQuestion = CheckAllUsersAnswered(cRoom);
+            });
         });
     });
     socket.on('disconnect', () => {
-        RemoveUserFromRoom(socket.id);
+        let roomOfRemovedUser = RemoveUserFromRoom(socket.id);
+        ResetRoom(roomOfRemovedUser, true);
+        io.to(roomOfRemovedUser).emit('NotEnoughUser', { message : `Not enough user in this room: ${roomOfRemovedUser}`});
     });
 });
 
@@ -95,7 +102,8 @@ const RemoveUserFromRoom = (socketId) => {
               if(users[i].id === socketId){
                   users.splice(i, 1);
                   if(users.length === 0) // Oda da herhangi bir kullanıcı kalmadığında odayı sil.
-                  DeleteRoom(room);
+                    DeleteRoom(room);
+                    return room;
               }
               
               
@@ -103,9 +111,51 @@ const RemoveUserFromRoom = (socketId) => {
     }
 };
 
+const ResetRoom = (room, isDisconnected) => {
+    let users = null;
+    if(rooms[room] !== undefined && rooms[room] !== null && 
+       rooms[room].users !== undefined && rooms[room].users !== null){
+           users = rooms[room].users;
+       }
+       
+       if(users !== null && users.length !== 0){
+           users.forEach(user => {
+               if(isDisconnected)
+                    user.point = 0;
+               user.hasAnswered = false;
+           });
+       }
+       console.log("userssss");
+       console.log(rooms[room].users);
+};
 const DeleteRoom = (room) =>{
     delete rooms[room];
 };
 
+const UpdateUserInfos = (room, socketId, point) => {
+    if(rooms[room] !== undefined && 
+        rooms[room].users.length !== null && 
+        rooms[room].users.length !== 0){
+        for (let i = 0; i < rooms[room].users.length; i++) {
+            if(rooms[room].users[i].id === socketId){
+                rooms[room].users[i].point = point;
+                rooms[room].users[i].hasAnswered = true;
+                return;
+            }
+            
+        }
+    }
+};
 
+const CheckAllUsersAnswered = (room) => {
+    if(rooms[room] !== undefined && rooms[room].users !== null){
+        for (let i = 0; i < rooms[room].users.length; i++) {
+            const user = rooms[room].users[i];
+            if(!user.hasAnswered)
+                return false;
+        }
+
+        return true;
+    }
+};
 module.exports = socketApi;
